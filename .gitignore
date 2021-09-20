@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+PFR_H2S.py
+PBR_Sabatier.py
