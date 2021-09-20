@@ -56,111 +56,116 @@ def k0(RXN, T):
         print("Reaction not chosen")
 
 
-F_H2 = 34.31
+def main():
+    F_H2 = 34.31
 
-IniVal = [F_H2/4.0, F_H2, 0, 0, 0]
+    IniVal = [F_H2/4.0, F_H2, 0, 0, 0]
 
-d_dw = IniVal
+    d_dw = IniVal
 
-y = np.zeros(5)
-
-
-P0 = 5.0  # bar
-T = 425+273.15
-# F_CO20 = 10  # mol/s
-# T0 = 850  # K
-
-# Ct0 = P0/.08314/T0  # mol/L
-# Ca0 = Ct0 * 0.33  # mol/L
-# Ft0 = 30  # mol/s
-# v0 = Ft0/Ct0
+    y = np.zeros(5)
 
 
-def Reactor(VEC, W):
+    P0 = 50.0  # bar
+    T = 425+273.15
+    # F_CO20 = 10  # mol/s
+    # T0 = 850  # K
 
-    F_CO2 = VEC[0]
-    F_H2 = VEC[1]
-    F_CO = VEC[2]
-    F_H2O = VEC[3]
-    F_CH4 = VEC[4]
-
-    FT = np.sum(VEC)
-    for i in range(len(VEC)):
-        if (VEC[i] != 0):
-            y[i] = np.abs(VEC[i]/FT)
-        else:
-            y[i] = 0
-
-    P_CO2 = y[0]*P0
-    P_H2 = y[1]*P0
-    P_CO = y[2]*P0
-    P_H2O = y[3]*P0
-    print(P_CO2, P_H2, P_CO, P_H2O)
-
-    # print(P_COO2, P_H2, P_CO, P_H2O)
-    # r_co = k_co(T) * (KA(T)*P_CO**(0.5)*P_H2**(0.5)) / \
-    #     ((1.0 + KA(T)*P_CO + KB(T)*P_H2O / (P_H2**(0.5)))**2.0)
-
-    # r_w = k_wg(T) * (KC(T)*P_CO / (P_H2**(0.5))
-    #                  * P_H2O - P_CO2*P_H2**(0.5)/KWG(T))/((1.0 + KA(T)*P_CO + KB(T)*P_H2O/(P_H2**(0.5)))**2.0)
-    det = (1.0 + K("CO2", T)*P_CO2 + K("CO", T)*P_CO +
-           K("H2", T)*P_H2 + K("H2O", T)**0.5 * P_H2O**0.5)
-
-    r_co = k0("RWGS", T)*P_CO2 / det
-
-    r_ch4_1 = k0("CO2_M", T) * K("CO2", T) * \
-        K("H2", T) * P_CO2 * P_H2 / det/det
-
-    r_ch4_2 = k0("CO_M", T) * K("CO", T) * \
-        K("H2", T) * P_CO * P_H2 / det/det
-
-    d_dw[0] = -r_ch4_1 - r_co  # mol/(kg-cat s)
-    d_dw[1] = -4.0 * r_ch4_1 - r_co - 3.0*r_ch4_2  # mol/(kg-cat s)
-    d_dw[2] = r_co - r_ch4_2  # mol/(kg-cat s)
-    d_dw[3] = r_ch4_1 + r_ch4_2  # mol/(kg-cat s)
-    d_dw[4] = 2.0*r_ch4_1 + r_co + r_ch4_2  # mol/(kg-cat s)
-
-    return d_dw
+    # Ct0 = P0/.08314/T0  # mol/L
+    # Ca0 = Ct0 * 0.33  # mol/L
+    # Ft0 = 30  # mol/s
+    # v0 = Ft0/Ct0
 
 
-w = np.linspace(0, 70)
+    def Reactor(VEC, W):
 
-fig = plt.figure(constrained_layout=True)
-# gs = gridspec.GridSpec(2, 1, figure=fig)
+        F_CO2 = VEC[0]
+        F_H2 = VEC[1]
+        F_CO = VEC[2]
+        F_H2O = VEC[3]
+        F_CH4 = VEC[4]
 
-# x = solve_ivp(Reactor, [0, 10], IniVal, method="RK45")
-# ax.plot(x.t, x.y)
+        FT = np.sum(VEC)
+        for i in range(len(VEC)):
+            if (VEC[i] != 0):
+                y[i] = np.abs(VEC[i]/FT)
+            else:
+                y[i] = 0
 
-x = odeint(Reactor, IniVal, w)
-# gs[0, 0]
-ax = fig.add_subplot()
-ax.plot(w, x)
-# ax.grid(True)
-# plt.gca().legend()
-ax.set_xlabel('Massa de catalisador (g)')
-ax.set_ylabel('F (mol/min)')
-ax.set_title("")
+        P_CO2 = y[0]*P0
+        P_H2 = y[1]*P0
+        P_CO = y[2]*P0
+        P_H2O = y[3]*P0
+        print(P_CO2, P_H2, P_CO, P_H2O)
 
-# ax2 = fig.add_subplot(gs[1, 0])
+        # print(P_COO2, P_H2, P_CO, P_H2O)
+        # r_co = k_co(T) * (KA(T)*P_CO**(0.5)*P_H2**(0.5)) / \
+        #     ((1.0 + KA(T)*P_CO + KB(T)*P_H2O / (P_H2**(0.5)))**2.0)
 
-# ax2.plot(w, x[:, 5:])
-# ax2.grid(True)
-# ax2.set_xlabel('Massa de catalisador (kg)')
-# ax2.set_ylabel('Temperatura (K)')
-# ax2.set_title("")
-# plot results
+        # r_w = k_wg(T) * (KC(T)*P_CO / (P_H2**(0.5))
+        #                  * P_H2O - P_CO2*P_H2**(0.5)/KWG(T))/((1.0 + KA(T)*P_CO + KB(T)*P_H2O/(P_H2**(0.5)))**2.0)
+        det = (1.0 + K("CO2", T)*P_CO2 + K("CO", T)*P_CO +
+            K("H2", T)*P_H2 + K("H2O", T)**0.5 * P_H2O**0.5)
+
+        r_co = k0("RWGS", T)*P_CO2 / det
+
+        r_ch4_1 = k0("CO2_M", T) * K("CO2", T) * \
+            K("H2", T) * P_CO2 * P_H2 / det/det
+
+        r_ch4_2 = k0("CO_M", T) * K("CO", T) * \
+            K("H2", T) * P_CO * P_H2 / det/det
+
+        d_dw[0] = -r_ch4_1 - r_co  # mol/(kg-cat s)
+        d_dw[1] = -4.0 * r_ch4_1 - r_co - 3.0*r_ch4_2  # mol/(kg-cat s)
+        d_dw[2] = r_co - r_ch4_2  # mol/(kg-cat s)
+        d_dw[3] = r_ch4_1 + r_ch4_2  # mol/(kg-cat s)
+        d_dw[4] = 2.0*r_ch4_1 + r_co + r_ch4_2  # mol/(kg-cat s)
+
+        return d_dw
 
 
-# text = '\n'.join((
-#     r'$\mathrm{P_{entrada}}=%.2f\,kPa$' % (P, ),
-#     r'$\mathrm{y_{H_{2}S}}=%.2e$' % (y_A_0, ),
-#     r'$\mathrm{P_{H_{2}S}}=%.2f\,kPa$' % (P_H2S, ),
-#     r'$\mathrm{Q_{H_{2}S}}=%.2e\,mol/s$' % (F_A, ),
-#     r'$\mathrm{T}=%.2f\,K$' % (T, )))
+    w = np.linspace(0, 70)
 
-# props = dict(boxstyle='round', F_CO2cecolor='wheat', alpha=0.5)
-# ax.text(0.5, 0.45, text, transform=ax.transAxes, fontsize=14,
-#         verticalalignment="top", bbox=props)
+    fig = plt.figure(constrained_layout=True)
+    # gs = gridspec.GridSpec(2, 1, figure=fig)
+
+    # x = solve_ivp(Reactor, [0, 10], IniVal, method="RK45")
+    # ax.plot(x.t, x.y)
+
+    x = odeint(Reactor, IniVal, w)
+    # gs[0, 0]
+    ax = fig.add_subplot()
+    ax.plot(w, x)
+    # ax.grid(True)
+    # plt.gca().legend()
+    ax.set_xlabel('Massa de catalisador (g)')
+    ax.set_ylabel('F (mol/min)')
+    ax.set_title("")
+
+    # ax2 = fig.add_subplot(gs[1, 0])
+
+    # ax2.plot(w, x[:, 5:])
+    # ax2.grid(True)
+    # ax2.set_xlabel('Massa de catalisador (kg)')
+    # ax2.set_ylabel('Temperatura (K)')
+    # ax2.set_title("")
+    # plot results
 
 
-plt.show()
+    # text = '\n'.join((
+    #     r'$\mathrm{P_{entrada}}=%.2f\,kPa$' % (P, ),
+    #     r'$\mathrm{y_{H_{2}S}}=%.2e$' % (y_A_0, ),
+    #     r'$\mathrm{P_{H_{2}S}}=%.2f\,kPa$' % (P_H2S, ),
+    #     r'$\mathrm{Q_{H_{2}S}}=%.2e\,mol/s$' % (F_A, ),
+    #     r'$\mathrm{T}=%.2f\,K$' % (T, )))
+
+    # props = dict(boxstyle='round', F_CO2cecolor='wheat', alpha=0.5)
+    # ax.text(0.5, 0.45, text, transform=ax.transAxes, fontsize=14,
+    #         verticalalignment="top", bbox=props)
+
+
+    plt.show()  
+
+
+if (__name__ == "__main__"):
+    main()

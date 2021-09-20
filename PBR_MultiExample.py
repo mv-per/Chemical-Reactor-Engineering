@@ -71,44 +71,49 @@ def Reactor(VEC, W):
     return d_dw
 
 
-w = np.linspace(0, 70, 500)
+def main():
+    w = np.linspace(0, 70, 500)
 
-fig = plt.figure(constrained_layout=True)
-gs = gridspec.GridSpec(2, 1, figure=fig)
+    fig = plt.figure(constrained_layout=True)
+    gs = gridspec.GridSpec(2, 1, figure=fig)
 
-# x = solve_ivp(Reactor, [0, 10], IniVal, method="RK45")
-# ax.plot(x.t, x.y)
+    # x = solve_ivp(Reactor, [0, 10], IniVal, method="RK45")
+    # ax.plot(x.t, x.y)
 
-x = odeint(Reactor, IniVal, w)
+    x = odeint(Reactor, IniVal, w)
 
-ax = fig.add_subplot(gs[0, 0])
-ax.plot(w, x[:, 0:5], label=["FA", "FB", "FC", "FD", "FE"])
-ax.grid(True)
-# plt.gca().legend()
-ax.set_xlabel('Massa de catalisador (kg)')
-ax.set_ylabel('F (mol/s)')
-ax.set_title("")
+    ax = fig.add_subplot(gs[0, 0])
+    ax.plot(w, x[:, 0:5], label=["FA", "FB", "FC", "FD", "FE"])
+    ax.grid(True)
+    # plt.gca().legend()
+    ax.set_xlabel('Massa de catalisador (kg)')
+    ax.set_ylabel('F (mol/s)')
+    ax.set_title("")
+    ax.legend(["FA", "FB", "FC", "FD", "FE"])
 
-ax2 = fig.add_subplot(gs[1, 0])
+    ax2 = fig.add_subplot(gs[1, 0])
 
-ax2.plot(w, x[:, 5:])
-ax2.grid(True)
-ax2.set_xlabel('Massa de catalisador (kg)')
-ax2.set_ylabel('Temperatura (K)')
-ax2.set_title("")
-# plot results
-
-
-# text = '\n'.join((
-#     r'$\mathrm{P_{entrada}}=%.2f\,kPa$' % (P, ),
-#     r'$\mathrm{y_{H_{2}S}}=%.2e$' % (y_A_0, ),
-#     r'$\mathrm{P_{H_{2}S}}=%.2f\,kPa$' % (P_H2S, ),
-#     r'$\mathrm{Q_{H_{2}S}}=%.2e\,mol/s$' % (F_A, ),
-#     r'$\mathrm{T}=%.2f\,K$' % (T, )))
-
-# props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-# ax.text(0.5, 0.45, text, transform=ax.transAxes, fontsize=14,
-#         verticalalignment="top", bbox=props)
+    ax2.plot(w, x[:, 5:])
+    ax2.grid(True)
+    ax2.set_xlabel('Massa de catalisador (kg)')
+    ax2.set_ylabel('Temperatura (K)')
+    ax2.set_title("")
+    # plot results
 
 
-plt.show()
+    # text = '\n'.join((
+    #     r'$\mathrm{P_{entrada}}=%.2f\,kPa$' % (P, ),
+    #     r'$\mathrm{y_{H_{2}S}}=%.2e$' % (y_A_0, ),
+    #     r'$\mathrm{P_{H_{2}S}}=%.2f\,kPa$' % (P_H2S, ),
+    #     r'$\mathrm{Q_{H_{2}S}}=%.2e\,mol/s$' % (F_A, ),
+    #     r'$\mathrm{T}=%.2f\,K$' % (T, )))
+
+    # props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    # ax.text(0.5, 0.45, text, transform=ax.transAxes, fontsize=14,
+    #         verticalalignment="top", bbox=props)
+
+
+    plt.show()
+
+if (__name__ == "__main__"):
+    main()
